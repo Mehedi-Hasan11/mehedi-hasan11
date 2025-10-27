@@ -1,0 +1,33 @@
+name: GitHub Art Work
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */12 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Generate GitHub Artwork
+        uses: jasineri/gitartwork@v1
+        with:
+          text: MEHEDI
+          font-family: Monospace
+          text-color: "#00FF00" # bright green
+          background-color: "#0a0a0a"
+          width: 800
+          height: 200
+          frame: 60
+          animation-duration: 4
+          rotate: true
+      - name: Commit and push result
+        run: |
+          mv gitartwork.svg ./gitartwork.svg
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add gitartwork.svg
+          git commit -m "Update gitartwork"
+          git push
