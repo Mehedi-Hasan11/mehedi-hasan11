@@ -6,28 +6,34 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (use PAT for checkout)
         uses: actions/checkout@v3
         with:
-          persist-credentials: true  # Enable GITHUB_TOKEN for push
+          token: ${{ secrets.ACTIONS_PAT }}
+          persist-credentials: true
+          fetch-depth: 0
 
       - name: Generate GitHub Artwork
         uses: jasineri/gitartwork@v1
         with:
-          user_name: "Mehedi-Hasan11"       # তোমার GitHub username
-          text: "MEHEDI"                     # তোমার নাম
-          svg_file_name: "gitartwork.svg"    # Output SVG filename
+          user_name: "Mehedi-Hasan11"
+          text: "MEHEDI"
+          svg_file_name: "gitartwork.svg"
 
-      - name: Commit & Push
+      - name: Commit & Push (use PAT)
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACTIONS_PAT: ${{ secrets.ACTIONS_PAT }}
         run: |
           git config user.name "mehedi-hasan11"
           git config user.email "mhasan95211@gmail.com"
           git add gitartwork.svg
           git diff-index --quiet HEAD || git commit -m "Update MEHEDI gitartwork"
-          git push
+          git push https://x-access-token:${ACTIONS_PAT}@github.com/${{ github.repository }} HEAD:main
+
